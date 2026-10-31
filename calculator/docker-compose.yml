@@ -1,0 +1,31 @@
+name: pg-calculator
+
+services:
+  pg-calculator:
+    build: .
+    image: pg-calculator:1.0
+    container_name: pg-calculator
+    restart: unless-stopped
+    # Faqat localhost: tashqariga host nginx orqali chiqadi
+    ports:
+      - "127.0.0.1:8020:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 64m
+    cpus: 0.25
+    pids_limit: 32
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
